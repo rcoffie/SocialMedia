@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError 
 from django.forms.fields import EmailField
 from django.forms import Form
+from .models import Profile
 
 
 class SignUpForm(UserCreationForm):
@@ -24,3 +25,18 @@ class SignUpForm(UserCreationForm):
         self.fields['email'].widget.attrs.update({'class':'form-control'})
         self.fields['password1'].widget.attrs.update({'class':'form-control'})
         self.fields['password2'].widget.attrs.update({'class':'form-control'})
+
+
+  
+
+
+class UserEditForm(forms.ModelForm):
+  class Meta:
+    model = User 
+    fields = ('first_name','last_name','email')
+
+
+class ProfileEditForm(forms.ModelForm):
+  class Meta:
+    model = Profile 
+    fields = ('birth_date','photo')
