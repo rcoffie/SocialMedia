@@ -13,6 +13,7 @@ from django.contrib.auth.forms import AuthenticationForm
 
 
 # Create your views here.
+
 def dashboard(request):
 
   return render(request,'account/dashboard.html')
@@ -21,7 +22,8 @@ def signup(request):
   if request.method == 'POST':
     form = SignUpForm(request.POST)
     if form.is_valid():
-      form.save()
+      new_user = form.save()
+      Profile.objects.create(user=new_user)
       messages.success(request,'user created')
       return redirect('account:login')
   else:
@@ -49,4 +51,22 @@ def userlogin(request):
   form = AuthenticationForm()
   return render(request, 'account/login.html',{
     'form':form,
+  })
+
+
+@login_required 
+def edit(request):
+  if request.method == 'POST':
+    user_form = UserEditForm(instance=request.user,data=request.POST)
+    profile_form = ProfileEditForm(instance=request.user.profile,data=request.POST,files=request.FILES)
+    if user_form.is_valid() and profile_form.is_valid():
+      user_form.save()
+      profile_form.save()
+  else:
+    user_form = UserEditForm(instance=request.user)
+    profile_form = ProfileEditForm(instance=request.user.profile)
+  
+  return render(request,'account/edit.html',{
+    'user_form':user_form,
+    'profile_form':profile_form
   })
